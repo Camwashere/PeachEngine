@@ -6,6 +6,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import main.Data.Frame.BaseFrameData;
 import main.Module.Story.Scenario.Frame.BaseFrame;
 import main.Module.Story.Scenario.Frame.FrameType;
 import main.Module.Story.Scenario.Frame.Parameter.InputParameter.InputParameter;
@@ -26,15 +27,22 @@ public class VariableFrame<T> extends BaseFrame
         input = (InputParameter<T>) InputParameter.CREATE(this, t, array);
         output = new OutputParameter<T>(this, t, array);
         Init();
+        AddInputParam(input);
+        AddOutputParam(output);
 
+    }
+    public VariableFrame(final Scenario s, final BaseFrameData data)
+    {
+        super(s, data);
+        input = (InputParameter<T>)GetInputParams().get(0);
+        output = (OutputParameter<T>)GetOutputParams().get(0);
+        Init();
     }
 
     private void Init()
     {
         name.setDisable(true);
         SetBackground(output.GetColor().desaturate().darker());
-        AddInputParam(input);
-        AddOutputParam(output);
         name.prefColumnCountProperty().bind(name.textProperty().length());
         SetName(" " + StringHelp.Capitalize(output.GetType().name()) + " ");
         output.GetValueProp().bind(input.GetValueProp());

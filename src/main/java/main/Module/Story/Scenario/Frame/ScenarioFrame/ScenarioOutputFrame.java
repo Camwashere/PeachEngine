@@ -3,6 +3,7 @@ package main.Module.Story.Scenario.Frame.ScenarioFrame;
 import javafx.geometry.Insets;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import main.Data.Frame.BaseFrameData;
 import main.Module.Story.Layout.StoryRightBar.ParamBox.OutputParamBox;
 import main.Module.Story.Scenario.Frame.BaseFrame;
 import main.Module.Story.Scenario.Frame.FrameType;
@@ -15,6 +16,16 @@ public class ScenarioOutputFrame extends BaseFrame
     {
         super(s, FrameType.SCENARIO_INPUT);
         box = s.GetParent().GetRight().GetOutputBox();
+        Init();
+    }
+    public ScenarioOutputFrame(final Scenario s, final BaseFrameData data)
+    {
+        super(s, data);
+        box = s.GetParent().GetRight().GetOutputBox();
+        Init();
+    }
+    private void Init()
+    {
         SetName(" Output ");
         name.setDisable(true);
         contextMenu.getItems().clear();

@@ -10,6 +10,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import main.Data.Frame.StoryFrameData;
 import main.Debug.Debug;
 import main.Maths.Vec.Vec2;
 import main.Module.Story.Scenario.Frame.BaseFrame;
@@ -29,19 +30,30 @@ import java.util.Optional;
 public class StoryFrame extends BaseFrame
 {
     private final TextEditor editor;
-    private final SimpleBooleanProperty expanded;
+    private final SimpleBooleanProperty expanded = new SimpleBooleanProperty(false);
 
     public StoryFrame(final Scenario s)
     {
         super(s, FrameType.STORY);
-        expanded = new SimpleBooleanProperty(false);
         editor = new TextEditor(this);
         getChildren().add(editor);
+        Init();
+        InputAddHelp(ParamType.FLOW);
+    }
+    public StoryFrame(final Scenario s, final StoryFrameData data)
+    {
+        super(s, data.baseData());
+        editor = new TextEditor(this);
+        editor.SetText(data.text());
+        Init();
+        getChildren().add(1, editor);
+    }
+    private void Init()
+    {
         EventInit();
         NameInit();
         EditorInit();
         editor.EditMode(false);
-        InputAddHelp(ParamType.FLOW);
     }
     private void NameInit()
     {
@@ -325,4 +337,5 @@ public class StoryFrame extends BaseFrame
 
     public final SimpleBooleanProperty GetExpandedProp(){return expanded;}
     public final boolean IsExpanded(){return expanded.get();}
+    public final StoryFrameData AsData(){return new StoryFrameData(AsBaseData(), editor.GetText());}
 }

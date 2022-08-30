@@ -67,10 +67,10 @@ public abstract class CharacterChildStateBase<T extends CharacterBase> extends C
     }
     private void ListenerInit()
     {
-        GetTemplate().GetVariables().addListener(new MapChangeListener<Integer, CharacterVariableBase>()
+        GetTemplate().GetVariables().addListener(new MapChangeListener<UUID, CharacterVariableBase>()
         {
             @Override
-            public void onChanged(Change<? extends Integer, ? extends CharacterVariableBase> change)
+            public void onChanged(Change<? extends UUID, ? extends CharacterVariableBase> change)
             {
                 if (change.wasRemoved())
                 {

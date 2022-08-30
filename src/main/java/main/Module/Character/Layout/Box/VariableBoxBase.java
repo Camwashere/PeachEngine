@@ -11,16 +11,17 @@ import main.Tools.EditableButton;
 import main.Tools.InitHelp;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class VariableBoxBase extends TitledPane
 {
 
-    private final int id;
+    private final UUID id;
     protected final EditableButton name;
     private final ScrollPane pane;
     private final VBox content;
 
-    public VariableBoxBase(final int ID, final String tempName)
+    public VariableBoxBase(final UUID ID, final String tempName)
     {
         id = ID;
         name = new EditableButton(tempName);
@@ -41,14 +42,14 @@ public class VariableBoxBase extends TitledPane
     }
     protected void AddContent(final Node node){content.getChildren().add(node);}
     public final EditableButton GetNameButton(){return name;}
-    public final int GetID(){return id;}
+    public final UUID GetID(){return id;}
 
     @Override
     public boolean equals(Object obj)
     {
         if (obj instanceof VariableBoxBase other)
         {
-            return id==other.GetID();
+            return id.equals(other.GetID());
         }
         return false;
     }

@@ -148,6 +148,7 @@ public class FrameItem implements EventHandler<ActionEvent>
     public final void SetName(final String n){name = n;}
     public final String GetName(){return name;}
     public final String GetParent(){return parent;}
+    public final BaseFrame GetFrame(){return frame;}
     public final boolean IsDirectory(){return frame == null;}
     public final boolean HasFrame(){return frame != null;}
     public final boolean HasParent(){return parent != null;}

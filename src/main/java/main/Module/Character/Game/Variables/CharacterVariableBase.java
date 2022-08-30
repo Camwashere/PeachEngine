@@ -2,13 +2,12 @@ package main.Module.Character.Game.Variables;
 
 import javafx.beans.property.SimpleStringProperty;
 
+import java.util.UUID;
+
 public abstract class CharacterVariableBase
 {
-    private static int ID=Integer.MIN_VALUE;
-    private static int ASSIGN_ID(){return ID++;}
-
     private final CharacterVariableBase parent;
-    private final int id;
+    private final UUID id;
     private final boolean isRoot;
     private final SimpleStringProperty name;
     private final SimpleStringProperty description;
@@ -17,7 +16,7 @@ public abstract class CharacterVariableBase
     public CharacterVariableBase(final String varName, final CharacterVariableType varType)
     {
         parent = null;
-        id = ASSIGN_ID();
+        id = UUID.randomUUID();
         isRoot = true;
         name = new SimpleStringProperty(varName);
         description = new SimpleStringProperty();
@@ -40,13 +39,13 @@ public abstract class CharacterVariableBase
     public final String GetName(){return name.get();}
     public final SimpleStringProperty GetNameProp(){return name;}
     public final SimpleStringProperty GetDescriptionProp(){return description;}
-    public final int GetID(){return id;}
+    public final UUID GetID(){return id;}
     public final CharacterVariableBase GetParent(){return parent;}
     public final boolean IsRoot(){return isRoot;}
 
     @Override
     public String toString()
     {
-        return String.format("Type: %s\nID: %d\nName: %s\nDescription: %s\n", type, id, name, description);
+        return String.format("Type: %s\nID: %s\nName: %s\nDescription: %s\n", type, id, name, description);
     }
 }

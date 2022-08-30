@@ -1,5 +1,6 @@
 package main.Module.Story.Scenario.Frame.Parameter;
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -13,6 +14,8 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import main.Data.DataBase;
+import main.Data.Frame.ConnectionData;
+import main.Data.Frame.ParameterBaseData;
 import main.Data.SaveObject;
 import main.Maths.Vec.Vec4;
 import main.Module.Story.Scenario.Frame.BaseFrame;
@@ -22,19 +25,20 @@ import main.Tools.InitHelp;
 import org.kordamp.jsilhouette.javafx.RegularPolygon;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
-public abstract class ParameterBase<T> extends HBox implements SaveObject
+public abstract class ParameterBase<T> extends HBox
 {
     private final UUID id;
     protected Color color;
-    protected final SimpleObjectProperty<ParamType> type;
+    protected final ParamType type;
     protected final Label name;
     protected Shape shape;
     protected final SimpleBooleanProperty active;
     protected final BaseFrame parent;
     protected final SimpleObjectProperty<T> value;
-    protected final SimpleBooleanProperty isArray;
+    protected final boolean isArray;
     protected final DynamicArrayList<ParameterConnector<T>> connectors;
     private final boolean isInput;
 
@@ -45,10 +49,85 @@ public abstract class ParameterBase<T> extends HBox implements SaveObject
         id = UUID.randomUUID();
         parent = parentFrame;
         value = new SimpleObjectProperty<T>();
-        type = new SimpleObjectProperty<ParamType>();
-        isArray = new SimpleBooleanProperty();
+        type = paramType;
+        ColorInit();
+        isArray = array;
         connectors = new DynamicArrayList<ParameterConnector<T>>();
         isInput = isIn;
+        ShapeInit();
+        name = new Label();
+        active = new SimpleBooleanProperty(false);
+        ListenerInit();
+        SelfInit();
+        EventInit();
+    }
+
+    public ParameterBase(final BaseFrame parentFrame, final ParameterBase<T> other)
+    {
+        id = UUID.randomUUID();
+        parent = parentFrame;
+        value = new SimpleObjectProperty<T>();
+        type = other.type;
+        ColorInit();
+        isArray = other.isArray;
+        connectors = new DynamicArrayList<ParameterConnector<T>>();
+        isInput = other.IsInput();
+        ShapeInit();
+        name = new Label();
+        active = new SimpleBooleanProperty(false);
+        ListenerInit();
+        SetValue(other.value.get());
+        SelfInit();
+        EventInit();
+    }
+    public ParameterBase(final BaseFrame parentFrame, final ParameterBaseData<T> data)
+    {
+        id = data.id();
+        parent = parentFrame;
+        value = new SimpleObjectProperty<T>();
+        type = data.type();
+        ColorInit();
+        isArray = data.isArray();
+        connectors = new DynamicArrayList<ParameterConnector<T>>();
+        isInput = data.isInput();
+        ShapeInit();
+        name = new Label(data.name());
+        active = new SimpleBooleanProperty(false);
+        ListenerInit();
+        SetValue(data.value());
+        SelfInit();
+        EventInit();
+
+
+    }
+
+    private void ColorInit()
+    {
+        switch (type)
+        {
+            case GENERIC:
+                color = Color.DARKGRAY;
+                shape = new RegularPolygon(0, 0, SHAPE_SIZE, 6).getShape();
+                break;
+            case FLOW:
+                color = Color.WHITE;
+                break;
+            case BOOL:
+                color = Color.RED;
+                break;
+            case NUMBER:
+                color = Color.GREEN;
+                break;
+            case TEXT:
+                color = Color.YELLOW;
+                break;
+            default:
+                color = Color.LIGHTBLUE;
+                break;
+        }
+    }
+    private void ShapeInit()
+    {
         if (IsArray())
         {
             shape = new Rectangle(SHAPE_SIZE, SHAPE_SIZE);
@@ -57,43 +136,6 @@ public abstract class ParameterBase<T> extends HBox implements SaveObject
         {
             shape = new Circle(SHAPE_SIZE);
         }
-
-
-        name = new Label();
-        active = new SimpleBooleanProperty(false);
-        ListenerInit();
-        isArray.set(array);
-        type.set(paramType);
-        SelfInit();
-        EventInit();
-    }
-
-    public ParameterBase(final BaseFrame parentFrame, final ParameterBase other)
-    {
-        id = UUID.randomUUID();
-        parent = parentFrame;
-        value = new SimpleObjectProperty<T>();
-        type = new SimpleObjectProperty<ParamType>();
-        isArray = new SimpleBooleanProperty();
-        connectors = new DynamicArrayList<ParameterConnector<T>>();
-        isInput = other.IsInput();
-        if (IsArray())
-        {
-            shape = new Rectangle(10, 10);
-        }
-        else
-        {
-            shape = new Circle(10);
-        }
-
-
-        name = new Label();
-        active = new SimpleBooleanProperty(false);
-        ListenerInit();
-        isArray.set(other.IsArray());
-        type.set(other.GetType());
-        SelfInit();
-        EventInit();
     }
 
     private void SelfInit()
@@ -159,51 +201,6 @@ public abstract class ParameterBase<T> extends HBox implements SaveObject
     }
     private void ListenerInit()
     {
-
-        isArray.addListener(new ChangeListener<Boolean>()
-        {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1)
-            {
-                if (t1)
-                {
-                    shape = new Rectangle(SHAPE_SIZE, SHAPE_SIZE);
-                }
-                else
-                {
-                    shape = new Circle(SHAPE_SIZE);
-                }
-            }
-        });
-        type.addListener(new ChangeListener<ParamType>()
-        {
-            @Override
-            public void changed(ObservableValue<? extends ParamType> observableValue, ParamType paramType, ParamType t1)
-            {
-                switch (t1)
-                {
-                    case GENERIC:
-                        color = Color.DARKGRAY;
-                        shape = new RegularPolygon(0, 0, SHAPE_SIZE, 6).getShape();
-                        break;
-                    case FLOW:
-                        color = Color.WHITE;
-                        break;
-                    case BOOL:
-                        color = Color.RED;
-                        break;
-                    case NUMBER:
-                        color = Color.GREEN;
-                        break;
-                    case TEXT:
-                        color = Color.YELLOW;
-                        break;
-                    default:
-                        color = Color.LIGHTBLUE;
-                        break;
-                }
-            }
-        });
         active.addListener(new ChangeListener<Boolean>()
         {
             @Override
@@ -311,18 +308,18 @@ public abstract class ParameterBase<T> extends HBox implements SaveObject
     public final void SetValue(final T val){value.setValue(val);}
     public final void SetName(final String str){name.setText(str);}
 
-    public final boolean IsArray(){return isArray.get();}
+    public final boolean IsArray(){return isArray;}
     public final boolean IsConnected(){return !connectors.isEmpty();}
     public final boolean IsInput(){return isInput;}
     public final boolean IsOutput(){return !isInput;}
     public final boolean IsActive(){return active.get();}
-    public final boolean IsGeneric(){return type.get()==ParamType.GENERIC;}
+    public final boolean IsGeneric(){return type==ParamType.GENERIC;}
 
     public final Shape GetShape(){return shape;}
     public final DynamicArrayList<ParameterConnector<T>> GetConnectors(){return connectors;}
     public final ParameterConnector<T> GetFirstConnector(){return connectors.GetFirst();}
     public final ParameterConnector<T> GetMostRecentConnector(){return connectors.GetLast();}
-    public final ParamType GetType(){return type.get();}
+    public final ParamType GetType(){return type;}
     public final Color GetColor(){return color;}
     public final BaseFrame GetParent(){return parent;}
     public final String GetName(){return name.getText();}
@@ -336,7 +333,7 @@ public abstract class ParameterBase<T> extends HBox implements SaveObject
     {
         if (obj instanceof ParameterBase<?> other)
         {
-            return type.get() == other.GetType() && isArray.get()==other.IsArray()
+            return type == other.GetType() && isArray==other.IsArray()
                     && isInput==other.isInput && color.equals(other.color) &&
                     shape.equals(other.shape) &&
                     id==other.id;
@@ -344,29 +341,23 @@ public abstract class ParameterBase<T> extends HBox implements SaveObject
         return false;
     }
 
-    @Override
-    public DataBase ToData()
+    public ParameterBaseData<T> AsData()
     {
-        DataBase data = new DataBase(this);
-        data.Add("ID", GetID());
-        data.Add("NAME", GetName());
-        data.Add("COLOR", new Vec4(GetColor()));
-        data.Add("TYPE", GetType());
-        data.Add("ARRAY", IsArray());
-        data.Add("IS_INPUT", IsInput());
-        ArrayList<DataBase> connectorData = new ArrayList<>();
-        for (final ParameterConnector<T> c : connectors)
+        List<ConnectionData> connectedParams = new ArrayList<>();
+        if (isInput)
         {
-            connectorData.add(c.ToData());
+            for (final ParameterConnector<T> c : connectors)
+            {
+                connectedParams.add(new ConnectionData(c.GetOutput().GetParent().GetID(), c.GetOutput().GetID()));
+            }
         }
-        data.Add("CONNECTOR_DATA", connectorData);
-
-        return data;
-    }
-
-    @Override
-    public void Load(DataBase data)
-    {
-
+        else
+        {
+            for (final ParameterConnector<T> c : connectors)
+            {
+                connectedParams.add(new ConnectionData(c.GetInput().GetParent().GetID(), c.GetInput().GetID()));
+            }
+        }
+        return new ParameterBaseData<T>(id, type, name.getText(), value.getValue(), isArray, isInput, connectedParams);
     }
 }

@@ -1,5 +1,8 @@
 package main.Help;
 
-public class Manual
+import javafx.scene.layout.BorderPane;
+
+public class Manual extends BorderPane
 {
+
 }

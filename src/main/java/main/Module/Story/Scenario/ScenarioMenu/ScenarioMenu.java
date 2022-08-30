@@ -11,6 +11,7 @@ import javafx.util.Callback;
 import main.Debug.Debug;
 import main.Module.Story.Layout.StoryLeftBar.ScenarioItem;
 import main.Module.Story.Scenario.Frame.FunctionFrame.FunctionFrame;
+import main.Module.Story.Scenario.Frame.FunctionFrame.FunctionType;
 import main.Module.Story.Scenario.Frame.FunctionFrame.Functions;
 import main.Module.Story.Scenario.Frame.InputFrame.InputFrameBool;
 import main.Module.Story.Scenario.Frame.InputFrame.InputFrameNumber;
@@ -22,9 +23,11 @@ import main.Module.Story.Scenario.Frame.StoryFrame.StoryFrame;
 import main.Module.Story.Scenario.Frame.VariableFrame.VariableFrame;
 import main.Module.Story.Scenario.Scenario;
 import main.Module.Story.Scenario.ScenarioState;
+import main.Tools.StringHelp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ScenarioMenu extends PopupControl
 {
@@ -424,6 +427,8 @@ public class ScenarioMenu extends PopupControl
             }
         }
     }
+
+
     
     
 }

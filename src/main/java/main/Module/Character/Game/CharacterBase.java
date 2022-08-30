@@ -19,12 +19,12 @@ public abstract class CharacterBase
     protected CharacterClassBase parent;
     protected final CharacterManager manager;
 
-    protected final LinkedMapProperty<Integer, CharacterVariableBase> variables;
-    protected final LinkedMapProperty<Integer, Attribute> attributes;
-    protected final LinkedMapProperty<Integer, Perk> perks;
-    protected final LinkedMapProperty<Integer, Trait> traits;
-    protected final LinkedMapProperty<Integer, Descriptor> descriptors;
-    protected final LinkedMapProperty<Integer, MentalState> mentalStates;
+    protected final LinkedMapProperty<UUID, CharacterVariableBase> variables;
+    protected final LinkedMapProperty<UUID, Attribute> attributes;
+    protected final LinkedMapProperty<UUID, Perk> perks;
+    protected final LinkedMapProperty<UUID, Trait> traits;
+    protected final LinkedMapProperty<UUID, Descriptor> descriptors;
+    protected final LinkedMapProperty<UUID, MentalState> mentalStates;
 
     protected Image icon=null;
 
@@ -39,7 +39,7 @@ public abstract class CharacterBase
         traits = new LinkedMapProperty<>();
         descriptors = new LinkedMapProperty<>();
         mentalStates = new LinkedMapProperty<>();
-        variables = new LinkedMapProperty<Integer, CharacterVariableBase>(GetAttributes(), GetPerks(), GetTraits(), GetDescriptors(), GetMentalStates());
+        variables = new LinkedMapProperty<UUID, CharacterVariableBase>(GetAttributes(), GetPerks(), GetTraits(), GetDescriptors(), GetMentalStates());
         for (Attribute a : parent.GetAttributes().values())
         {
             AddNewAttribute(a);
@@ -76,7 +76,7 @@ public abstract class CharacterBase
         traits = new LinkedMapProperty<>();
         descriptors = new LinkedMapProperty<>();
         mentalStates = new LinkedMapProperty<>();
-        variables = new LinkedMapProperty<Integer, CharacterVariableBase>(GetAttributes(), GetPerks(), GetTraits(), GetDescriptors(), GetMentalStates());
+        variables = new LinkedMapProperty<UUID, CharacterVariableBase>(GetAttributes(), GetPerks(), GetTraits(), GetDescriptors(), GetMentalStates());
     }
     
 
@@ -180,18 +180,18 @@ public abstract class CharacterBase
     public final CharacterManager GetManager(){return manager;}
 
     // GET SINGLE
-    public final Attribute GetAttribute(final int i){return attributes.get(i);}
-    public final Perk GetPerk(final int i){return perks.get(i);}
-    public final Trait GetTrait(final int i){return traits.get(i);}
-    public final Descriptor GetDescriptor(final int i){return descriptors.get(i);}
-    public final MentalState GetMentalState(final int i){return mentalStates.get(i);}
+    public final Attribute GetAttribute(final UUID i){return attributes.get(i);}
+    public final Perk GetPerk(final UUID i){return perks.get(i);}
+    public final Trait GetTrait(final UUID i){return traits.get(i);}
+    public final Descriptor GetDescriptor(final UUID i){return descriptors.get(i);}
+    public final MentalState GetMentalState(final UUID i){return mentalStates.get(i);}
 
-    public final LinkedMapProperty<Integer, Attribute> GetAttributes(){return attributes;}
-    public final LinkedMapProperty<Integer, Perk> GetPerks(){return perks;}
-    public final LinkedMapProperty<Integer, Trait> GetTraits(){return traits;}
-    public final LinkedMapProperty<Integer, Descriptor> GetDescriptors(){return descriptors;}
-    public final LinkedMapProperty<Integer, MentalState> GetMentalStates(){return mentalStates;}
-    public final LinkedMapProperty<Integer, CharacterVariableBase> GetVariables(){return variables;}
+    public final LinkedMapProperty<UUID, Attribute> GetAttributes(){return attributes;}
+    public final LinkedMapProperty<UUID, Perk> GetPerks(){return perks;}
+    public final LinkedMapProperty<UUID, Trait> GetTraits(){return traits;}
+    public final LinkedMapProperty<UUID, Descriptor> GetDescriptors(){return descriptors;}
+    public final LinkedMapProperty<UUID, MentalState> GetMentalStates(){return mentalStates;}
+    public final LinkedMapProperty<UUID, CharacterVariableBase> GetVariables(){return variables;}
     public final Image GetIcon(){return icon;}
     public abstract String GetDisplayName();
 

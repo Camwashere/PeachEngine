@@ -29,4 +29,6 @@ module main {
     opens main.Module.ModuleManager to javafx.fxml;
     exports main.Module.ModuleBase;
     opens main.Module.ModuleBase to javafx.fxml;
+    exports main.Project;
+    opens main.Project to javafx.fxml;
 }

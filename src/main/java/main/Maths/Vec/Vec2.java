@@ -49,6 +49,11 @@ public class Vec2 implements Serializable
         x=X;
         y=Y;
     }
+    public final void Set(final Vec2 other)
+    {
+        x = other.x;
+        y = other.y;
+    }
 
     @Override
     public boolean equals(Object o)

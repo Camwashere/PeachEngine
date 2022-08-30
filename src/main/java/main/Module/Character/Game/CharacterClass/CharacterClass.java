@@ -7,6 +7,8 @@ import main.Module.Character.Game.CharacterBase;
 import main.Module.Character.Game.Variables.*;
 import main.Tools.LinkedMapProperty;
 
+import java.util.UUID;
+
 public class CharacterClass extends CharacterClassBase
 {
     private final SimpleStringProperty name;
@@ -21,10 +23,10 @@ public class CharacterClass extends CharacterClassBase
     }
     private void Init()
     {
-        perks.addListener(new MapChangeListener<Integer, Perk>()
+        perks.addListener(new MapChangeListener<UUID, Perk>()
         {
             @Override
-            public void onChanged(Change<? extends Integer, ? extends Perk> change)
+            public void onChanged(Change<? extends UUID, ? extends Perk> change)
             {
                 if (change.wasAdded())
                 {

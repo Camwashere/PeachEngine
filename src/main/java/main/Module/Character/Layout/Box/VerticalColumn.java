@@ -25,6 +25,7 @@ import main.Tools.InitHelp;
 import main.Tools.LinkedMapProperty;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class VerticalColumn extends VBox
 {
@@ -32,7 +33,7 @@ public class VerticalColumn extends VBox
     private final Label name;
     private final ScrollPane pane;
     private final VBox content;
-    private final LinkedMapProperty<Integer, VariableBoxBase> variables;
+    private final LinkedMapProperty<UUID, VariableBoxBase> variables;
 
     public VerticalColumn(final CharacterStateBase base, final String str)
     {
@@ -40,7 +41,7 @@ public class VerticalColumn extends VBox
         name = new Label(str);
         pane = new ScrollPane();
         content = new VBox();
-        variables = new LinkedMapProperty<Integer, VariableBoxBase>();
+        variables = new LinkedMapProperty<UUID, VariableBoxBase>();
         InitHelp.LabelInit(name);
         setVgrow(name, Priority.SOMETIMES);
         setVgrow(pane, Priority.ALWAYS);
@@ -53,10 +54,10 @@ public class VerticalColumn extends VBox
         HBox.setHgrow(this, Priority.SOMETIMES);
         pane.setFitToWidth(true);
 
-        variables.addListener(new MapChangeListener<Integer, VariableBoxBase>()
+        variables.addListener(new MapChangeListener<UUID, VariableBoxBase>()
         {
             @Override
-            public void onChanged(Change<? extends Integer, ? extends VariableBoxBase> change)
+            public void onChanged(Change<? extends UUID, ? extends VariableBoxBase> change)
             {
                 if (change.wasRemoved())
                 {
@@ -159,7 +160,7 @@ public class VerticalColumn extends VBox
     {
         variables.clear();
     }
-    public final void RemoveContent(final int id)
+    public final void RemoveContent(final UUID id)
     {
         variables.remove(id);
     }

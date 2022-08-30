@@ -17,27 +17,22 @@ import java.io.*;
 public class Main extends Application
 {
     public static GlobalSettings SETTINGS;
+    private Splash splash;
     @Override
     public void start(Stage stage) throws IOException
     {
         SETTINGS = new GlobalSettings();
+        splash = new Splash(stage);
         Debug.SET_DEBUG_LEVEL(1);
         stage.setTitle("Peach Engine");
-        ModuleManager moduleManager = new ModuleManager();
-        moduleManager.GetCurrentProp().addListener(new ChangeListener<ModuleID>()
-        {
-            @Override
-            public void changed(ObservableValue<? extends ModuleID> observableValue, ModuleID moduleID, ModuleID t1)
-            {
-                stage.setTitle("Peach Engine - " + StringHelp.EnumFormat(t1));
-            }
-        });
-
-        moduleManager.SetModule(ModuleID.MAP);
-        Scene scene = new Scene(moduleManager, SETTINGS.GetResolution().x, SETTINGS.GetResolution().y);
+        Scene scene = new Scene(splash, SETTINGS.GetResolution().x, SETTINGS.GetResolution().y);
         stage.setScene(scene);
         stage.show();
+
+
     }
+
+
 
     public static void main(String[] args)
     {

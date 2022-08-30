@@ -1,6 +1,7 @@
 package main.Module.Story.Scenario.Frame.Parameter.OutputParameter;
 
 import javafx.geometry.Pos;
+import main.Data.Frame.ParameterBaseData;
 import main.Module.Story.Scenario.Frame.BaseFrame;
 import main.Module.Story.Scenario.Frame.Parameter.ParamType;
 import main.Module.Story.Scenario.Frame.Parameter.ParameterBase;
@@ -23,6 +24,12 @@ public class OutputParameter<T> extends ParameterBase<T>
     {
         super(parentFrame, other);
         SetName(other.GetName());
+        Init();
+    }
+
+    public OutputParameter(final BaseFrame parentFrame, final ParameterBaseData<T> data)
+    {
+        super(parentFrame, data);
         Init();
     }
 

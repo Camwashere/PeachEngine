@@ -27,9 +27,6 @@ public class PlayCenter extends VBox
         text = new Text();
         text.setFont(new Font(150));
         text.setTextAlignment(TextAlignment.CENTER);
-
-
-
     }
 
     public final void LoadScenario(final Scenario s)
@@ -75,11 +72,7 @@ public class PlayCenter extends VBox
     {
         if (frame.GetOutput().IsConnected())
         {
-            LoadFrame(frame.GetOutput().GetFirstConnector().GetEnd().GetParent());
-        }
-        else
-        {
-            Debug.println("Input frame not connected");
+            LoadFrame(frame.GetOutput().GetFirstConnector().GetInput().GetParent());
         }
     }
 
@@ -94,7 +87,7 @@ public class PlayCenter extends VBox
             {
                 if (param.IsConnected())
                 {
-                    LoadFrame(param.GetFirstConnector().GetEnd().GetParent());
+                    LoadFrame(param.GetFirstConnector().GetInput().GetParent());
                 }
             });
             InitHelp.ButtonInit(b);
@@ -114,9 +107,9 @@ public class PlayCenter extends VBox
         {
             if (frame.IsReady())
             {
-                if (frame.GetOutput().IsConnected())
+                if (frame.GetNext() != null)
                 {
-                    LoadFrame(frame.GetOutput().GetFirstConnector().GetEnd().GetParent());
+                    LoadFrame(frame.GetNext());
                 }
             }
         });

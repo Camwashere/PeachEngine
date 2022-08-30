@@ -406,6 +406,7 @@ public class Functions
     }
 
     // MATH
+    @SuppressWarnings("unchecked")
     public static List<FunctionFrame> MATH(final Scenario s)
     {
         List<FunctionFrame> list = new ArrayList<FunctionFrame>();
@@ -800,6 +801,44 @@ public class Functions
 
 
         return list;
+    }
+
+    public static BiFunction<SimpleListProperty<InputParameter<?>>, SimpleListProperty<OutputParameter<?>>, BaseFrame> GET_FUNCTION(final FunctionType type, final String name, final Scenario s)
+    {
+        List<FunctionFrame> frames;
+        switch(type)
+        {
+            case OPERATOR:
+                frames = Functions.OPERATORS(s);
+                break;
+            case LOGIC:
+                frames = Functions.LOGIC(s);
+                break;
+            case MATH:
+                frames = Functions.MATH(s);
+                break;
+            case ARRAY:
+                frames = Functions.ARRAY(s);
+                break;
+            case TEXT:
+                frames = Functions.TEXT(s);
+                break;
+            default:
+                frames = null;
+                break;
+        }
+        if (frames == null)
+        {
+            return null;
+        }
+        for (final FunctionFrame f : frames)
+        {
+            if (f.GetName().equals(name))
+            {
+                return f.GetFunction();
+            }
+        }
+        return null;
     }
     
     

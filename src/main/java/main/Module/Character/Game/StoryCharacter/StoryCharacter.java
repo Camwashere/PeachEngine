@@ -6,12 +6,17 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.MapChangeListener;
 import main.Debug.Debug;
+import main.Maths.Vec.Vec2;
 import main.Module.Character.Game.CharacterBase;
 import main.Module.Character.Game.CharacterClass.CharacterClassBase;
 import main.Module.Character.Game.Variables.*;
 import main.Module.Item.Game.Inventory;
 import main.Module.Map.Game.Time.GameTime;
+import main.Module.Relationship.Game.Disposition;
+import main.Module.Relationship.Game.RelationshipManager;
 import main.Tools.LinkedMapProperty;
+
+import java.util.UUID;
 
 public class StoryCharacter extends CharacterBase
 {
@@ -20,8 +25,9 @@ public class StoryCharacter extends CharacterBase
     private final SimpleStringProperty lastName;
     private final SimpleBooleanProperty nameProp = new SimpleBooleanProperty(false);
     private final GameTime birthday = new GameTime();
-
+    private final LinkedMapProperty<UUID, Disposition> dispositions = new LinkedMapProperty<>();
     private final Inventory inventory;
+    private final RelationshipManager relationshipManager;
     private final SimpleBooleanProperty destroyed = new SimpleBooleanProperty(false);
 
 
@@ -32,6 +38,7 @@ public class StoryCharacter extends CharacterBase
         middleName = new SimpleStringProperty();
         lastName = new SimpleStringProperty();
         inventory = new Inventory(this);
+        relationshipManager = new RelationshipManager(this);
         Init();
 
     }
@@ -42,6 +49,7 @@ public class StoryCharacter extends CharacterBase
         middleName = new SimpleStringProperty(middle);
         lastName = new SimpleStringProperty(last);
         inventory = new Inventory(this);
+        relationshipManager = new RelationshipManager(this);
         Init();
     }
 
@@ -71,10 +79,10 @@ public class StoryCharacter extends CharacterBase
                 nameProp.set(!nameProp.get());
             }
         });
-        perks.addListener(new MapChangeListener<Integer, Perk>()
+        perks.addListener(new MapChangeListener<UUID, Perk>()
         {
             @Override
-            public void onChanged(Change<? extends Integer, ? extends Perk> change)
+            public void onChanged(Change<? extends UUID, ? extends Perk> change)
             {
                 if (change.wasAdded())
                 {
@@ -98,6 +106,9 @@ public class StoryCharacter extends CharacterBase
     public final void Destroy() {destroyed.set(true);}
     @Override
     public boolean IsClass() {return false;}
+
+    public final void AddDisposition(final CharacterVariableBase var, final Vec2 val){AddDisposition(new Disposition(var, val));}
+    public final void AddDisposition(final Disposition disposition) {dispositions.put(disposition.GetID(), disposition);}
 
     // SET
     public final void SetFirstName(final String name){firstName.set(name);}
@@ -138,6 +149,9 @@ public class StoryCharacter extends CharacterBase
     public final int GetAge(final GameTime currentTime){return birthday.YearsBetween(currentTime);}
     public final boolean IsDestroyed(){return destroyed.get();}
     public final SimpleBooleanProperty GetNameChangedProp(){return nameProp;}
+    public final Disposition GetDisposition(final UUID varID) {return dispositions.get(varID);}
+    public final LinkedMapProperty<UUID, Disposition> GetDispositions(){return dispositions;}
+    public final RelationshipManager GetRelationshipManager(){return relationshipManager;}
 
 
 
@@ -146,7 +160,7 @@ public class StoryCharacter extends CharacterBase
     @Override
     public String toString()
     {
-        String selfString = String.format("Name: %s\nID: %d\n", GetLegalName(), GetID());
+        String selfString = String.format("Name: %s\nID: %s\n", GetLegalName(), GetID());
         String attributeString = "Attributes: \n";
         for (Attribute a : attributes.values())
         {

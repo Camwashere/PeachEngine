@@ -1,5 +1,6 @@
 package main.Module.Story.Scenario.Frame.Parameter.OutputParameter;
 
+import main.Data.Frame.ParameterBaseData;
 import main.Module.Story.Scenario.Frame.BaseFrame;
 import main.Module.Story.Scenario.Frame.Parameter.ParamType;
 
@@ -18,5 +19,6 @@ public class OutputParameterArray<T> extends OutputParameter<ArrayList<T>>
         super(parentFrame, paramType, true, paramName);
         //SetValue(new ArrayList<T>());
     }
+
 
 }

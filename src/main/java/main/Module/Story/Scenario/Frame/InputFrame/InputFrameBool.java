@@ -4,17 +4,27 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Control;
+import main.Data.Frame.BaseFrameData;
+import main.Data.Frame.InputFrameData;
 import main.Module.Story.Scenario.Frame.Parameter.ParamType;
 import main.Module.Story.Scenario.Scenario;
 import main.Tools.InitHelp;
 
 public class InputFrameBool extends InputFrameBase<Boolean>
 {
-    private final CheckBox check;
+    private final CheckBox check = new CheckBox();
     public InputFrameBool(final Scenario s)
     {
         super(s, ParamType.BOOL);
-        check = new CheckBox();
+        Init();
+    }
+    public InputFrameBool(final Scenario s, final InputFrameData data)
+    {
+        super(s, data);
+        Init();
+    }
+    private void Init()
+    {
         InitHelp.NodeInit(check);
         check.setText("False");
         SetOutputValue(false);

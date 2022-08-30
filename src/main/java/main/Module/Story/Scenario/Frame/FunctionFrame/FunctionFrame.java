@@ -5,6 +5,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import main.Data.Frame.FunctionFrameData;
 import main.Debug.Debug;
 import main.Module.Story.Scenario.Frame.BaseFrame;
 import main.Module.Story.Scenario.Frame.FrameType;
@@ -16,6 +17,7 @@ import main.Module.Story.Scenario.Scenario;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.BiFunction;
 
 public class FunctionFrame extends BaseFrame
@@ -25,6 +27,7 @@ public class FunctionFrame extends BaseFrame
     public FunctionFrame(final Scenario s, final FunctionType fType, final BiFunction<SimpleListProperty<InputParameter<?>>, SimpleListProperty<OutputParameter<?>>, BaseFrame> func, final String name)
     {
         super(s, FrameType.FUNCTION);
+
         functionType = fType;
         function = func;
         SetName(name);
@@ -45,6 +48,14 @@ public class FunctionFrame extends BaseFrame
             AddOutputParam(new OutputParameter<>(this, o));
         }
         this.name.setDisable(true);
+    }
+    public FunctionFrame(final Scenario s, final FunctionFrameData data)
+    {
+        super(s, data.baseData());
+        this.name.setDisable(true);
+        functionType = data.functionType();
+        function = Functions.GET_FUNCTION(functionType, GetName(), s);
+        SetName(data.baseData().name());
     }
 
     public final ParameterBase<?> Cast(final ParameterBase<?> p)
@@ -100,6 +111,8 @@ public class FunctionFrame extends BaseFrame
         return function.apply(inputParams, outputParams);
     }
 
+    public final BiFunction<SimpleListProperty<InputParameter<?>>, SimpleListProperty<OutputParameter<?>>, BaseFrame> GetFunction(){return function;}
+
     @Override
     public void UpdateInputValues()
     {
@@ -135,5 +148,10 @@ public class FunctionFrame extends BaseFrame
         setBorder(b);
 
         setPrefSize(150, 100);
+    }
+
+    public final FunctionFrameData AsData()
+    {
+        return new FunctionFrameData(functionType, super.AsBaseData());
     }
 }

@@ -24,19 +24,32 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.WindowEvent;
 import main.Data.DataBase;
+import main.Data.Frame.*;
 import main.Data.SaveObject;
+import main.Data.ScenarioData;
+import main.Debug.Debug;
+import main.Module.Story.Scenario.Frame.FunctionFrame.FunctionFrame;
+import main.Module.Story.Scenario.Frame.InputFrame.InputFrameBase;
+import main.Module.Story.Scenario.Frame.InputFrame.InputFrameBool;
+import main.Module.Story.Scenario.Frame.InputFrame.InputFrameNumber;
+import main.Module.Story.Scenario.Frame.InputFrame.InputFrameText;
+import main.Module.Story.Scenario.Frame.Parameter.InputParameter.InputParameter;
+import main.Module.Story.Scenario.Frame.Parameter.OutputParameter.OutputParameter;
 import main.Module.Story.Scenario.Frame.Parameter.ParamType;
+import main.Module.Story.Scenario.Frame.ScenarioFrame.ScenarioFrame;
 import main.Module.Story.Scenario.Frame.ScenarioFrame.ScenarioInputFrame;
 import main.Module.Story.Scenario.Frame.ScenarioFrame.ScenarioOutputFrame;
+import main.Module.Story.Scenario.Frame.StoryFrame.StoryFrame;
+import main.Module.Story.Scenario.Frame.VariableFrame.VariableFrame;
 import main.Module.Story.Scenario.ScenarioMenu.ScenarioMenu;
 import main.Module.Story.Scenario.Frame.BaseFrame;
 import main.Module.Story.Scenario.Frame.Parameter.ParameterConnector;
 import main.Module.Story.StoryModule;
+import main.Tools.LinkedMapProperty;
 import main.Tools.StringHelp;
 import main.Tools.TrackMap;
 
-import java.util.ArrayList;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Contains the logic/scripting, text, variables, and general
@@ -48,7 +61,7 @@ import java.util.UUID;
  * creating custom functions such as determining how changes to
  * attributes are calculated.
  */
-public class Scenario extends Pane implements EventHandler<InputEvent>, SaveObject
+public class Scenario extends Pane implements EventHandler<InputEvent>
 {
     private static final double PREF_SIZE = 9999999;
 
@@ -57,11 +70,11 @@ public class Scenario extends Pane implements EventHandler<InputEvent>, SaveObje
     private final SimpleStringProperty name;
     private final UUID id;
     private final StoryModule parent;
-    private final TrackMap<ScenarioState, EventHandler<InputEvent>> states;
-    private final SimpleMapProperty<UUID, BaseFrame> frames;
+    private final TrackMap<ScenarioState, EventHandler<InputEvent>> states = new TrackMap<>();
+    private final LinkedMapProperty<UUID, BaseFrame> frames = new LinkedMapProperty<>();
     private final ScenarioInputFrame input;
     private final ScenarioOutputFrame output;
-    private final SimpleObjectProperty<ParameterConnector<?>> activeConnector;
+    private final SimpleObjectProperty<ParameterConnector<?>> activeConnector = new SimpleObjectProperty<>();
     private final ScenarioMenu menu;
     private final ScenarioType type;
 
@@ -71,11 +84,8 @@ public class Scenario extends Pane implements EventHandler<InputEvent>, SaveObje
         id = UUID.randomUUID();
         name = new SimpleStringProperty(String.format("Scenario: %s", String.valueOf(id)));
         type = ScenarioType.STANDARD;
-        states = new TrackMap<ScenarioState, EventHandler<InputEvent>>();
-        frames = new SimpleMapProperty<>(FXCollections.observableHashMap());
         input = new ScenarioInputFrame(this);
         output = new ScenarioOutputFrame(this);
-        activeConnector = new SimpleObjectProperty<ParameterConnector<?>>();
         menu = new ScenarioMenu(this);
         EventInit();
         ListenerInit();
@@ -89,16 +99,127 @@ public class Scenario extends Pane implements EventHandler<InputEvent>, SaveObje
         id = UUID.randomUUID();
         type = scenarioType;
         name = new SimpleStringProperty(StringHelp.EnumFormat(type));
-        states = new TrackMap<ScenarioState, EventHandler<InputEvent>>();
-        frames = new SimpleMapProperty<>(FXCollections.observableHashMap());
         input = new ScenarioInputFrame(this);
         output = new ScenarioOutputFrame(this);
-        activeConnector = new SimpleObjectProperty<ParameterConnector<?>>();
         menu = new ScenarioMenu(this);
         EventInit();
         ListenerInit();
         SelfInit();
         TypeInit();
+    }
+
+    public Scenario(final StoryModule storyMod, final ScenarioData data)
+    {
+        parent = storyMod;
+        id = data.id();
+        type = data.type();
+        name = new SimpleStringProperty(data.name());
+        input = new ScenarioInputFrame(this);
+        output = new ScenarioOutputFrame(this);
+        menu = new ScenarioMenu(this);
+        EventInit();
+        ListenerInit();
+        SelfInit();
+        TypeInit();
+        LoadFrames(data.storyFrames(), data.functionFrames(), data.scenarioFrames(), data.inputFrames(), data.otherFrames());
+    }
+
+    public final void LoadFrames(final Map<UUID, StoryFrameData> storyFrames, final Map<UUID, FunctionFrameData> funcFrames, final Map<UUID, ScenarioFrameData> scenarioFrames, final Map<UUID, InputFrameData> inputFrames, final Map<UUID, BaseFrameData> otherFrames)
+    {
+        // Load Frames
+        Map<UUID, BaseFrameData> dataMap = new LinkedHashMap<>();
+        for (final StoryFrameData data : storyFrames.values())
+        {
+            StoryFrame frame = new StoryFrame(this, data);
+            AddFrame(frame, data.baseData());
+            dataMap.put(data.baseData().id(), data.baseData());
+
+        }
+        for (final FunctionFrameData data : funcFrames.values())
+        {
+            FunctionFrame frame = new FunctionFrame(this, data);
+            AddFrame(frame, data.baseData());
+            dataMap.put(data.baseData().id(), data.baseData());
+        }
+        for (final ScenarioFrameData data : scenarioFrames.values())
+        {
+            ScenarioFrame frame = new ScenarioFrame(this, data);
+            AddFrame(frame, data.baseData());
+            dataMap.put(data.baseData().id(), data.baseData());
+        }
+        for (final InputFrameData data : inputFrames.values())
+        {
+            InputFrameBase<?> frame;
+            switch (data.inputType())
+            {
+                case BOOL:
+                    frame = new InputFrameBool(this, data);
+                    break;
+                case NUMBER:
+                    frame = new InputFrameNumber(this, data);
+                    break;
+                case TEXT:
+                    frame = new InputFrameText(this, data);
+                    break;
+                default:
+                    frame = null;
+
+            }
+            if (frame != null)
+            {
+                AddFrame(frame, data.baseData());
+                dataMap.put(data.baseData().id(), data.baseData());
+            }
+            else
+            {
+                Debug.println("LOSS OF INPUT FRAME DATA");
+            }
+        }
+        for (final BaseFrameData data : otherFrames.values())
+        {
+            BaseFrame frame;
+            switch(data.type())
+            {
+                case VARIABLE:
+                    frame = new VariableFrame<>(this, data);
+                    break;
+                case SCENARIO_INPUT:
+                    frame = new ScenarioInputFrame(this, data);
+                    break;
+                case SCENARIO_OUTPUT:
+                    frame = new ScenarioOutputFrame(this, data);
+                    break;
+                default:
+                    frame = null;
+            }
+            if (frame != null)
+            {
+                AddFrame(frame, data);
+                dataMap.put(data.id(), data);
+            }
+            else
+            {
+                Debug.println("LOSS OF OTHER FRAME DATA");
+            }
+        }
+
+        // Load Connectors
+        for (final BaseFrameData data : dataMap.values())
+        {
+            for (final InputParameter<?> i : frames.get(data.id()).GetInputParams())
+            {
+                ParameterConnector<?> c = new ParameterConnector<>(i);
+                for (final ConnectionData d : data.parameters().get(i.GetID()).connectedParams())
+                {
+                    if (frames.get(d.frameID()) != null)
+                    {
+                        c.Connect(frames.get(d.frameID()).GetOutputParam(d.paramID()));
+                    }
+                }
+                getChildren().add(c);
+
+            }
+        }
     }
 
     private void TypeInit()
@@ -324,6 +445,10 @@ public class Scenario extends Pane implements EventHandler<InputEvent>, SaveObje
 
         }
     }
+    public void AddFrame(final BaseFrame frame, final BaseFrameData data)
+    {
+        AddFrame(frame, data.pos().x, data.pos().y);
+    }
 
     public void AddFrame(final BaseFrame frame, double x, double y)
     {
@@ -368,6 +493,7 @@ public class Scenario extends Pane implements EventHandler<InputEvent>, SaveObje
     public final boolean IsStandard(){return type == ScenarioType.STANDARD;}
     public final int GetFrameCount(){return frames.size();}
     public final ScenarioType GetType(){return type;}
+    public final ScenarioMenu GetScenarioMenu(){return menu;}
 
     @Override
     public boolean equals(Object obj)
@@ -382,26 +508,42 @@ public class Scenario extends Pane implements EventHandler<InputEvent>, SaveObje
         }
     }
 
-    @Override
-    public DataBase ToData()
+    public final ScenarioData AsData()
     {
-        DataBase data = new DataBase(this);
-        data.Add("ID", GetID());
-        data.Add("NAME", GetName());
-        data.Add("TYPE", GetType());
-        // Add frames
-        ArrayList<DataBase> frameData = new ArrayList<>();
-        for (final BaseFrame f : frames.values())
+        Map<UUID, StoryFrameData> storyFrameData = new LinkedHashMap<>();
+        Map<UUID, FunctionFrameData> functionFrameData = new LinkedHashMap<>();
+        Map<UUID, ScenarioFrameData> scenarioFrameData = new LinkedHashMap<>();
+        Map<UUID, InputFrameData> inputFrameData = new LinkedHashMap<>();
+        Map<UUID, BaseFrameData> otherFrameData = new LinkedHashMap<>();
+        for (final BaseFrame frame : frames.values())
         {
-            frameData.add(f.ToData());
+            if (frame instanceof StoryFrame story)
+            {
+                storyFrameData.put(frame.GetID(), story.AsData());
+            }
+            else if (frame instanceof FunctionFrame func)
+            {
+                functionFrameData.put(func.GetID(), func.AsData());
+            }
+            else if (frame instanceof ScenarioFrame scenario)
+            {
+                scenarioFrameData.put(scenario.GetID(), scenario.AsData());
+            }
+            else if (frame instanceof InputFrameBase<?> input)
+            {
+                inputFrameData.put(input.GetID(), input.AsData());
+            }
+            else
+            {
+                otherFrameData.put(frame.GetID(), frame.AsBaseData());
+            }
         }
-        data.Add("FRAMES", frameData);
-        return data;
+
+        return new ScenarioData(id, name.get(), type, storyFrameData, functionFrameData, scenarioFrameData, inputFrameData, otherFrameData);
     }
 
-    @Override
-    public void Load(DataBase data)
-    {
 
-    }
+
+
+
 }

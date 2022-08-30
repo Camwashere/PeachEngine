@@ -17,7 +17,10 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import main.Data.DataBase;
+import main.Data.Frame.BaseFrameData;
+import main.Data.Frame.ParameterBaseData;
 import main.Data.SaveObject;
+import main.Debug.Debug;
 import main.Maths.Vec.Vec2;
 import main.Module.Story.Scenario.Frame.Parameter.*;
 import main.Module.Story.Scenario.Frame.Parameter.InputParameter.InputParameter;
@@ -29,10 +32,9 @@ import main.Tools.InitHelp;
 import main.Tools.StringHelp;
 
 
-import java.util.ArrayList;
-import java.util.UUID;
+import java.util.*;
 
-public abstract class BaseFrame extends VBox implements SaveObject
+public abstract class BaseFrame extends VBox
 {
     protected final UUID id;
 
@@ -42,9 +44,9 @@ public abstract class BaseFrame extends VBox implements SaveObject
     protected final Vec2 delta;
     protected final ContextMenu contextMenu;
     protected final Scenario parent;
-    protected final SimpleListProperty<InputParameter<?>> inputParams;
-    protected final SimpleListProperty<OutputParameter<?>> outputParams;
-    protected final ArrayList<ParameterSlot> paramSlots;
+    protected final SimpleListProperty<InputParameter<?>> inputParams = new SimpleListProperty<>(FXCollections.observableArrayList());;
+    protected final SimpleListProperty<OutputParameter<?>> outputParams = new SimpleListProperty<>(FXCollections.observableArrayList());
+    protected final ArrayList<ParameterSlot> paramSlots = new ArrayList<ParameterSlot>();
 
     protected boolean isGlowing;
     protected final TextField name;
@@ -55,16 +57,53 @@ public abstract class BaseFrame extends VBox implements SaveObject
 
     public BaseFrame(final Scenario scenario, final FrameType frameType)
     {
-        inputParams = new SimpleListProperty<>(FXCollections.observableArrayList());
-        outputParams = new SimpleListProperty<>(FXCollections.observableArrayList());
-        paramSlots = new ArrayList<ParameterSlot>();
+        parent = scenario;
         id = UUID.randomUUID();
         type = frameType;
-        parent = scenario;
         delta = new Vec2();
         contextMenu = new ContextMenu();
         isGlowing = false;
         name = new TextField("");
+        Init();
+    }
+    public BaseFrame(final Scenario scenario, final BaseFrameData data)
+    {
+        parent = scenario;
+        id = data.id();
+        type = data.type();
+        delta = new Vec2();
+        contextMenu = new ContextMenu();
+        isGlowing = false;
+        name = new TextField(data.name());
+        Init();
+        setLayoutX(data.pos().x);
+        setLayoutY(data.pos().y);
+        LoadParameters(data.parameters());
+    }
+
+    public final OutputParameter<?> GetOutputParam(final UUID paramID)
+    {
+        for (final OutputParameter<?> o : outputParams)
+        {
+            if (Objects.equals(o.GetID(), paramID))
+            {
+                return o;
+            }
+        }
+        return null;
+
+    }
+
+    private void LoadParameters(final Map<UUID, ParameterBaseData<?>> paramData)
+    {
+        for (final ParameterBaseData<?> data : paramData.values())
+        {
+            LoadParameter(data);
+        }
+    }
+
+    private void ListenerInit()
+    {
         name.textProperty().addListener(new ChangeListener<String>()
         {
             @Override
@@ -84,12 +123,13 @@ public abstract class BaseFrame extends VBox implements SaveObject
             }
         });
         name.setText("Frame: " + id);
-        Init();
-
     }
+
+
 
     private void Init()
     {
+        ListenerInit();
         SimpleListProperty<?> list = new SimpleListProperty<>(FXCollections.observableArrayList());
         setLayoutX(0);
         setLayoutY(0);
@@ -393,6 +433,10 @@ public abstract class BaseFrame extends VBox implements SaveObject
     {
         AddInputParam(InputParameter.CREATE(this, paramType, array, paramName));
     }
+    public void LoadInputParameter(final ParameterBaseData<?> data)
+    {
+        AddInputParam(InputParameter.CREATE(this, data));
+    }
 
     public final boolean ReplaceInputParameter(final InputParameter<?> old, final InputParameter<?> n)
     {
@@ -474,6 +518,24 @@ public abstract class BaseFrame extends VBox implements SaveObject
             AddOutputParam(new OutputParameter<>(this, paramType, false, paramName));
         }
     }
+    public void LoadOutputParameter(final ParameterBaseData<?> data)
+    {
+        AddOutputParam(new OutputParameter<>(this, data));
+    }
+
+    public void LoadParameter(final ParameterBaseData<?> data)
+    {
+        if (data.isInput())
+        {
+            LoadInputParameter(data);
+        }
+        else
+        {
+            LoadOutputParameter(data);
+        }
+    }
+
+
     public void AddInputParam(final InputParameter<?> b)
     {
         inputParams.add(b);
@@ -627,7 +689,21 @@ public abstract class BaseFrame extends VBox implements SaveObject
         return isGlowing;
     }
 
-    @Override
+    public final BaseFrameData AsBaseData()
+    {
+        Map<UUID, ParameterBaseData<?>> paramData = new LinkedHashMap<>();
+        for (final InputParameter<?> i : inputParams)
+        {
+            paramData.put(i.GetID(), i.AsData());
+        }
+        for (final OutputParameter<?> o : outputParams)
+        {
+            paramData.put(o.GetID(), o.AsData());
+        }
+        return new BaseFrameData(id, name.getText(), type, new Vec2(getLayoutX(), getLayoutY()), paramData);
+    }
+
+    /*@Override
     public DataBase ToData()
     {
         DataBase data = new DataBase(this);
@@ -656,6 +732,10 @@ public abstract class BaseFrame extends VBox implements SaveObject
     @Override
     public void Load(DataBase data)
     {
+        if (Objects.equals(data.GetClassName(), this.getClass().getName()))
+        {
 
-    }
+        }
+
+    }*/
 }

@@ -4,6 +4,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
+import main.Data.Frame.ParameterBaseData;
 import main.Module.Story.Scenario.Frame.BaseFrame;
 import main.Module.Story.Scenario.Frame.Parameter.ParamType;
 import main.Tools.InitHelp;
@@ -24,19 +25,19 @@ public class InputParameterBool extends InputParameter<Boolean>
         box = new ComboBox<Boolean>();
         Init();
     }
+    public InputParameterBool(final BaseFrame parentFrame, final ParameterBaseData<Boolean> data)
+    {
+        super(parentFrame, data);
+        box = new ComboBox<>();
+        Init();
+        SetValue(data.value());
+    }
 
     private void Init()
     {
         box.getItems().add(true);
         box.getItems().add(false);
-        box.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Boolean>()
-        {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1)
-            {
-                SetValue(t1);
-            }
-        });
+        box.valueProperty().bindBidirectional(GetValueProp());
         box.getSelectionModel().selectFirst();
         InitHelp.NodeInit(box);
         if (! IsArray())

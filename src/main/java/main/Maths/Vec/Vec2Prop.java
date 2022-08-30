@@ -36,6 +36,7 @@ public class Vec2Prop
     public final void SetX(double x){xProp.set(x);}
     public final void SetY(double y){yProp.set(y);}
 
+    public final Vec2 Get(){return new Vec2(GetX(), GetY());}
     public final double GetX(){return xProp.get();}
     public final double GetY(){return yProp.get();}
     public final SimpleDoubleProperty GetXProp(){return xProp;}

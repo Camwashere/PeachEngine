@@ -55,35 +55,6 @@ public class RelationshipArea extends VBox
         setPrefHeight(GetSectionY());
     }
 
-    /*private void CalculateGridScale()
-    {
-        double sum = 0;
-        double count = 0;
-        for (final Axis.TickMark<Number> t : parent.GetAxisX().getTickMarks())
-        {
-            sum += t.getPosition();
-            count++;
-        }
-        double halfWay = sum/count;
-        double axisLayout = parent.GetAxisX().getLayoutX();
-        double fullWay = halfWay*2.0;
-        double section = fullWay/count;
-        SetSectionX(section);
-        // Add layout to section for adjusted coords
-        sum = 0;
-        count = 0;
-        for (final Axis.TickMark<Number> t : parent.GetAxisY().getTickMarks())
-        {
-            sum += t.getPosition();
-            count++;
-        }
-        halfWay = sum/count;
-        fullWay = halfWay*2.0;
-        section = fullWay/count;
-        SetSectionY(section);
-        //Debug.Println("SECTION: " + new Vec2(GetSectionX(), GetSectionY()));
-    }*/
-
 
 
     private void PosSnap(double x, double y)
@@ -331,8 +302,7 @@ public class RelationshipArea extends VBox
 
     }
 
-    /*private void SetSectionX(double d){sectionX.set(d);}
-    private void SetSectionY(double d){sectionY.set(d);}*/
+
     public void SetColor(final Color c){color.set(new Color(c.getRed(), c.getGreen(), c.getBlue(), .5));}
     public void SetName(final String str){name.set(str);}
 

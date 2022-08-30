@@ -7,6 +7,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.text.TextAlignment;
+import main.Data.Frame.ParameterBaseData;
 import main.Module.Story.Scenario.Frame.BaseFrame;
 import main.Module.Story.Scenario.Frame.Parameter.ParamType;
 import main.Module.Story.Scenario.Frame.Parameter.ParameterBase;
@@ -84,6 +85,21 @@ public abstract class InputParameter<T> extends ParameterBase<T>
         }
     }
 
+    public static InputParameter<?> CREATE(final BaseFrame parentFrame, final ParameterBaseData<?> data)
+    {
+        switch (data.type())
+        {
+            case BOOL:
+                return new InputParameterBool(parentFrame, (ParameterBaseData<Boolean>) data);
+            case NUMBER:
+                return new InputParameterNumber(parentFrame, (ParameterBaseData<Number>) data);
+            case TEXT:
+                return new InputParameterText(parentFrame, (ParameterBaseData<String>) data);
+            default:
+                return new InputParameterFlow(parentFrame, (ParameterBaseData<BaseFrame>) data);
+        }
+    }
+
 
     public InputParameter(final BaseFrame parentFrame, final ParamType paramType, final boolean array)
     {
@@ -99,6 +115,12 @@ public abstract class InputParameter<T> extends ParameterBase<T>
     public InputParameter(final BaseFrame parentFrame, final InputParameter<T> other)
     {
         super(parentFrame, other);
+        Init();
+    }
+
+    public InputParameter(final BaseFrame parentFrame, final ParameterBaseData<T> data)
+    {
+        super(parentFrame, data);
         Init();
     }
 

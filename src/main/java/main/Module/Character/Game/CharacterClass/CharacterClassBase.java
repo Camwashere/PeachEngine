@@ -29,10 +29,10 @@ public abstract class CharacterClassBase extends CharacterBase
     }
     private void ListenerInit()
     {
-        attributes.addListener(new MapChangeListener<Integer, Attribute>()
+        attributes.addListener(new MapChangeListener<UUID, Attribute>()
         {
             @Override
-            public void onChanged(Change<? extends Integer, ? extends Attribute> change)
+            public void onChanged(Change<? extends UUID, ? extends Attribute> change)
             {
                 if (change.wasAdded())
                 {
@@ -51,10 +51,10 @@ public abstract class CharacterClassBase extends CharacterBase
             }
         });
 
-        perks.addListener(new MapChangeListener<Integer, Perk>()
+        perks.addListener(new MapChangeListener<UUID, Perk>()
         {
             @Override
-            public void onChanged(Change<? extends Integer, ? extends Perk> change)
+            public void onChanged(Change<? extends UUID, ? extends Perk> change)
             {
                 if (change.wasAdded())
                 {
@@ -77,10 +77,10 @@ public abstract class CharacterClassBase extends CharacterBase
             }
         });
 
-        traits.addListener(new MapChangeListener<Integer, Trait>()
+        traits.addListener(new MapChangeListener<UUID, Trait>()
         {
             @Override
-            public void onChanged(Change<? extends Integer, ? extends Trait> change)
+            public void onChanged(Change<? extends UUID, ? extends Trait> change)
             {
                 if (change.wasAdded())
                 {
@@ -99,10 +99,10 @@ public abstract class CharacterClassBase extends CharacterBase
             }
         });
 
-        descriptors.addListener(new MapChangeListener<Integer, Descriptor>()
+        descriptors.addListener(new MapChangeListener<UUID, Descriptor>()
         {
             @Override
-            public void onChanged(Change<? extends Integer, ? extends Descriptor> change)
+            public void onChanged(Change<? extends UUID, ? extends Descriptor> change)
             {
                 if (change.wasAdded())
                 {
@@ -120,10 +120,10 @@ public abstract class CharacterClassBase extends CharacterBase
                 }
             }
         });
-        mentalStates.addListener(new MapChangeListener<Integer, MentalState>()
+        mentalStates.addListener(new MapChangeListener<UUID, MentalState>()
         {
             @Override
-            public void onChanged(Change<? extends Integer, ? extends MentalState> change)
+            public void onChanged(Change<? extends UUID, ? extends MentalState> change)
             {
                 if (change.wasAdded())
                 {

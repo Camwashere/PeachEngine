@@ -25,10 +25,10 @@ public class CharacterTemplateState extends CharacterStateBase
 
     private void ListenerInit(final CharacterTree tree)
     {
-        tree.GetTemplate().GetAttributes().addListener(new MapChangeListener<Integer, Attribute>()
+        tree.GetTemplate().GetAttributes().addListener(new MapChangeListener<UUID, Attribute>()
         {
             @Override
-            public void onChanged(Change<? extends Integer, ? extends Attribute> change)
+            public void onChanged(Change<? extends UUID, ? extends Attribute> change)
             {
                 if (change.wasAdded())
                 {
@@ -40,10 +40,10 @@ public class CharacterTemplateState extends CharacterStateBase
                 }
             }
         });
-        tree.GetTemplate().GetPerks().addListener(new MapChangeListener<Integer, Perk>()
+        tree.GetTemplate().GetPerks().addListener(new MapChangeListener<UUID, Perk>()
         {
             @Override
-            public void onChanged(Change<? extends Integer, ? extends Perk> change)
+            public void onChanged(Change<? extends UUID, ? extends Perk> change)
             {
                 if (change.wasAdded())
                 {
@@ -55,10 +55,10 @@ public class CharacterTemplateState extends CharacterStateBase
                 }
             }
         });
-        tree.GetTemplate().GetTraits().addListener(new MapChangeListener<Integer, Trait>()
+        tree.GetTemplate().GetTraits().addListener(new MapChangeListener<UUID, Trait>()
         {
             @Override
-            public void onChanged(Change<? extends Integer, ? extends Trait> change)
+            public void onChanged(Change<? extends UUID, ? extends Trait> change)
             {
                 if (change.wasAdded())
                 {
@@ -70,10 +70,10 @@ public class CharacterTemplateState extends CharacterStateBase
                 }
             }
         });
-        tree.GetTemplate().GetDescriptors().addListener(new MapChangeListener<Integer, Descriptor>()
+        tree.GetTemplate().GetDescriptors().addListener(new MapChangeListener<UUID, Descriptor>()
         {
             @Override
-            public void onChanged(Change<? extends Integer, ? extends Descriptor> change)
+            public void onChanged(Change<? extends UUID, ? extends Descriptor> change)
             {
                 if (change.wasAdded())
                 {
@@ -85,10 +85,10 @@ public class CharacterTemplateState extends CharacterStateBase
                 }
             }
         });
-        tree.GetTemplate().GetMentalStates().addListener(new MapChangeListener<Integer, MentalState>()
+        tree.GetTemplate().GetMentalStates().addListener(new MapChangeListener<UUID, MentalState>()
         {
             @Override
-            public void onChanged(Change<? extends Integer, ? extends MentalState> change)
+            public void onChanged(Change<? extends UUID, ? extends MentalState> change)
             {
                 if (change.wasAdded())
                 {

@@ -4,16 +4,26 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Control;
 import javafx.scene.control.TextField;
+import main.Data.Frame.BaseFrameData;
+import main.Data.Frame.InputFrameData;
 import main.Module.Story.Scenario.Frame.Parameter.ParamType;
 import main.Module.Story.Scenario.Scenario;
 
 public class InputFrameText extends InputFrameBase<String>
 {
-    private final TextField field;
+    private final TextField field = new TextField();
     public InputFrameText(final Scenario s)
     {
         super(s, ParamType.TEXT);
-        field = new TextField();
+        Init();
+    }
+    public InputFrameText(final Scenario s, final InputFrameData data)
+    {
+        super(s, data);
+        Init();
+    }
+    private void Init()
+    {
         field.textProperty().addListener(new ChangeListener<String>()
         {
             @Override

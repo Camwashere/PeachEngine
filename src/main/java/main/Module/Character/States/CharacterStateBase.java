@@ -73,7 +73,7 @@ public abstract class CharacterStateBase extends BorderPane
 
 
 
-    public final void RemoveContent(final int id)
+    public final void RemoveContent(final UUID id)
     {
         attributes.RemoveContent(id);
         perks.RemoveContent(id);

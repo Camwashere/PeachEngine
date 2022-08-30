@@ -1,9 +1,11 @@
 package main.Settings;
 
+import main.Debug.Debug;
 import main.Maths.Vec.Vec2;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystem;
 import java.util.Scanner;
 
 public class GlobalSettings
@@ -11,6 +13,7 @@ public class GlobalSettings
     private static final String path = "src/main/resources/config";
     private double version;
     private final Vec2 resolution;
+    private File savePath;
 
     public GlobalSettings()
     {
@@ -27,6 +30,26 @@ public class GlobalSettings
             e.printStackTrace();
             System.exit(-1);
         }
+        savePath = new File(System.getProperty("user.home") + "/Documents/Peach Engine");
+        if (savePath.exists())
+        {
+            Debug.println("Save path exists");
+            Debug.println(savePath);
+        }
+        else
+        {
+            if (savePath.mkdir())
+            {
+                Debug.println("MADE DIRECTORY");
+            }
+            else
+            {
+                Debug.println("COULD NOT MAKE DIRECTORY");
+                System.exit(-1);
+            }
+        }
+
+
     }
     private void VersionInit(final String line)
     {
@@ -43,4 +66,5 @@ public class GlobalSettings
     }
 
     public final Vec2 GetResolution(){return resolution;}
+    public final File GetSavePath(){return savePath;}
 }

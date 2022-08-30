@@ -7,6 +7,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import main.Data.Frame.ScenarioFrameData;
 import main.Module.Story.Scenario.Frame.BaseFrame;
 import main.Module.Story.Scenario.Frame.FrameType;
 import main.Module.Story.Scenario.Frame.Parameter.InputParameter.InputParameter;
@@ -22,9 +23,7 @@ public class ScenarioFrame extends BaseFrame
     {
         super(s, FrameType.SCENARIO);
         ref = reference;
-        name.textProperty().bind(ref.GetNameProp());
-        Construct();
-        ListenerInit();
+        Init();
 
     }
 
@@ -32,6 +31,18 @@ public class ScenarioFrame extends BaseFrame
     {
         super(other.parent, FrameType.SCENARIO);
         ref = other.ref;
+        Init();
+
+    }
+
+    public ScenarioFrame(final Scenario s, final ScenarioFrameData data)
+    {
+        super(s, data.baseData());
+        ref = parent.GetParent().GetScenario(data.ref());
+        Init();
+    }
+    private void Init()
+    {
         name.textProperty().bind(ref.GetNameProp());
         Construct();
         ListenerInit();
@@ -118,4 +129,6 @@ public class ScenarioFrame extends BaseFrame
         Border b = new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT));
         setBorder(b);
     }
+
+    public final ScenarioFrameData AsData(){return new ScenarioFrameData(ref.GetID(), AsBaseData());}
 }

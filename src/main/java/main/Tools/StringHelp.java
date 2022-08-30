@@ -2,7 +2,9 @@ package main.Tools;
 
 import javafx.scene.paint.Color;
 
+import java.io.File;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Helper class for quick {@link String} formatting
@@ -75,5 +77,12 @@ public class StringHelp
     public static String AbsoluteFile(final String s)
     {
         return s.replace("\\", "/");
+    }
+    public static Optional<String> GetFileExtension(final File file)
+    {
+        String filename = file.getName();
+        return Optional.of(filename)
+                .filter(f -> f.contains("."))
+                .map(f -> f.substring(filename.lastIndexOf(".") + 1));
     }
 }

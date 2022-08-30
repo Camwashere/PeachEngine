@@ -1,6 +1,9 @@
 package main.Module.Story;
 
 import javafx.beans.property.SimpleObjectProperty;
+import main.Data.ScenarioData;
+import main.Data.StoryData;
+import main.Debug.Debug;
 import main.Module.ModuleBase.BaseModule;
 import main.Module.ModuleBase.ModuleID;
 import main.Module.ModuleManager.ModuleManager;
@@ -13,6 +16,8 @@ import main.Module.Story.Scenario.Scenario;
 import main.Module.Story.Scenario.ScenarioType;
 import main.Tools.TrackMap;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -43,6 +48,21 @@ public class StoryModule extends BaseModule
         setRight(right);
         setTop(top);
     }
+    public StoryModule(final ModuleManager modManager, final StoryData data)
+    {
+        super(ModuleID.STORY, modManager);
+        left = new StoryLeftBar(this);
+        right = new StoryRightBar(this);
+        center = new StoryCenter(this);
+        top = new StoryTopBar(this);
+
+        main = new Scenario(this, data.mainData());
+        left.GetScenarioTree().AddScenario(main);
+        setLeft(left);
+        setCenter(center);
+        setRight(right);
+        setTop(top);
+    }
 
 
 
@@ -56,4 +76,14 @@ public class StoryModule extends BaseModule
     public final ScenarioTree GetScenarioTree(){return left.GetScenarioTree();}
     public final StoryCenter GetCenter(){return center;}
     public final StoryRightBar GetRight(){return right;}
+
+    public final StoryData AsData()
+    {
+        List<ScenarioData> scenarioData = new ArrayList<>();
+        for (final Scenario s : GetScenarios().values())
+        {
+            scenarioData.add(s.AsData());
+        }
+        return new StoryData(main.AsData(), scenarioData);
+    }
 }
